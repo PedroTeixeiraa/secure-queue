@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: spring-security-jwt
+  datasource:
+    url: jdbc:mysql://localhost:3306/jwt?allowPublicKeyRetrieval=true&useSSL=false
+    username: admin
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate.ddl-auto: update
+    show-sql: true
+
+jwt:
+  public-key: classpath:public_key.pem
+  private-key: classpath:private_key.pem
