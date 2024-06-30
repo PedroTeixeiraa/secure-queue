@@ -29,7 +29,7 @@ public class JwtService {
 
 		Instant now = Instant.now();
 		JwtClaimsSet claims = JwtClaimsSet.builder()
-				.issuer("spring-security-jwt")
+				.issuer("secure-queue")
 				.issuedAt(now)
 				.expiresAt(now.plusSeconds(TOKEN_EXPIRY))
 				.subject(authentication.getName())
