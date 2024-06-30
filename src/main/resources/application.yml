@@ -9,7 +9,6 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate.ddl-auto: update
-    show-sql: true
 
 jwt:
   public-key: classpath:public_key.pem

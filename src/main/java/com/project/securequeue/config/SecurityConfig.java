@@ -3,6 +3,7 @@ package com.project.securequeue.config;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.nimbusds.jose.jwk.JWK;
@@ -36,14 +38,20 @@ public class SecurityConfig {
 	@Value("${jwt.private-key}")
 	private RSAPrivateKey privateKey;
 
+	@Qualifier("customAuthenticationEntryPoint")
+	private final AuthenticationEntryPoint authEntryPoint;
+
+	public SecurityConfig(AuthenticationEntryPoint authEntryPoint) {
+		this.authEntryPoint = authEntryPoint;
+	}
+
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(auth -> auth.requestMatchers("/authenticate", "/create").permitAll().anyRequest().authenticated())
 				.httpBasic(Customizer.withDefaults())
-				.sessionManagement(session -> {
-					session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-				})
+				.httpBasic(basic -> basic.authenticationEntryPoint(authEntryPoint))
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.oauth2ResourceServer(conf -> conf.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())));
 
 		return http.build();
